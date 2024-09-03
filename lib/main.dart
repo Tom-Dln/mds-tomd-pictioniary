@@ -1,20 +1,18 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+import 'app/app.dart';
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World'),
-        ),
-      ),
-    );
-  }
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await runZonedGuarded(
+    () async {
+      runApp(const PictioniaryApp());
+    },
+    (error, stackTrace) {
+      debugPrint('Uncaught exception: ');
+      debugPrint(error.toString());
+    },
+  );
 }
