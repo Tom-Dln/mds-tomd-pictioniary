@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../splash.dart';
+import '../utils/constants.dart';
 import 'app_theme.dart';
 
 class PictioniaryApp extends StatelessWidget {
@@ -10,7 +11,7 @@ class PictioniaryApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Pictioniary',
+      title: PictConstants.appName,
       theme: AppTheme.light(),
       home: const SplashScreen(),
     );

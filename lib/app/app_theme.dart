@@ -4,33 +4,38 @@ class AppTheme {
   const AppTheme._();
 
   static ThemeData light() {
-    const background = Color(0xFF111527);
-    const surface = Color(0xFF1B2236);
+    const primaryColor = Color(0xFF101321);
+    const surfaceColor = Color(0xFF151A2D);
 
     return ThemeData(
       brightness: Brightness.dark,
       colorScheme: const ColorScheme.dark(
-        primary: Color(0xFF5874F2),
-        secondary: Color(0xFF4DD0E1),
-        background: background,
-        surface: surface,
+        primary: Color(0xFF6C5CE7),
+        secondary: Color(0xFF00B894),
+        surface: surfaceColor,
+        background: primaryColor,
       ),
-      scaffoldBackgroundColor: background,
+      scaffoldBackgroundColor: primaryColor,
       appBarTheme: const AppBarTheme(
-        backgroundColor: surface,
+        backgroundColor: surfaceColor,
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      textTheme: const TextTheme(
-        headlineSmall: TextStyle(
-          fontWeight: FontWeight.w600,
-          color: Colors.white,
-        ),
-        bodyMedium: TextStyle(
-          color: Color(0xFFE2E6F3),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF6C5CE7),
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       ),
-      useMaterial3: true,
+      inputDecorationTheme: const InputDecorationTheme(
+        filled: true,
+        fillColor: surfaceColor,
+        border: OutlineInputBorder(),
+      ),
     );
   }
 }
