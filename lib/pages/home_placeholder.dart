@@ -2,46 +2,62 @@ import 'package:flutter/material.dart';
 
 import '../utils/constants.dart';
 import '../utils/sharedpreferences.dart';
-import 'login_placeholder.dart';
+import '../widgets/MyButton.dart';
+import '../widgets/pict_background.dart';
+import 'login_step_1.dart';
 
-class HomePlaceholderPage extends StatelessWidget {
-  const HomePlaceholderPage({super.key});
+class HomePlaceholderScreen extends StatelessWidget {
+  const HomePlaceholderScreen({super.key});
 
   Future<void> _logout(BuildContext context) async {
-    await SharedPreferencesHelper.setBool('isLoggedIn', false);
-
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => const LoginPlaceholderPage()),
+    await SharedPreferencesHelper.clearData();
+    if (!context.mounted) return;
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
+      (_) => false,
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: PictConstants.background,
-      appBar: AppBar(
-        title: const Text('Accueil'),
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Bienvenue dans Piction.ia.ry !',
-                style: TextStyle(
-                  fontSize: PictConstants.fontSizeLarge,
-                  color: PictConstants.textPrimary,
-                ),
-                textAlign: TextAlign.center,
+      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.transparent,
+      body: PictGradientBackground(
+        child: SafeArea(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Bienvenue dans Pictioniary',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: PictConstants.PictSecondary,
+                      fontSize: 28,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'L\'espace d\'équipe n\'est pas encore disponible dans cette version.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.7),
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                  MyButton(
+                    text: 'Se déconnecter',
+                    onPressed: () => _logout(context),
+                  ),
+                ],
               ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => _logout(context),
-                child: const Text('Se déconnecter'),
-              ),
-            ],
+            ),
           ),
         ),
       ),

@@ -1,16 +1,19 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class PictConstants {
-  static const String appName = 'Piction.ia.ry';
+  static const appName = "Piction.ia.ry";
+  static const String appNameBold = "PICTION.IA.RY";
+  static const String appVersion = "1.0";
 
-  static const Color background = Color(0xFF101321);
-  static const Color surface = Color(0xFF151A2D);
-  static const Color primary = Color(0xFF6C5CE7);
-  static const Color secondary = Color(0xFF00B894);
-  static const Color textPrimary = Colors.white;
-  static const Color textSecondary = Color(0xFFB2B7C6);
-
-  static const double fontSizeLarge = 24;
-  static const double fontSizeMedium = 18;
-  static const double fontSizeSmall = 14;
+  static const Color PictPrimary = Color(0xFF7C3AED);
+  static const Color PictSecondary = Color(0xFFF7F5FF);
+  static const Color PictAccent = Color(0xFF2DD4BF);
+  static const Color PictSurface = Color(0xFF1E1B4B);
+  static const Color PictSurfaceVariant = Color(0xFF2A2550);
+  static const Color PictRed = Color(0xFFEF476F);
+  static const Color PictGrey = Color(0xFF94A3B8);
+  static const Color PictGreen = Color(0xFF4ADE80);
+  static const Color PictOrange = Color(0xFFFFB703);
+  static const Color PictBlack = Color(0xFF0F172A);
 }

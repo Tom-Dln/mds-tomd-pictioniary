@@ -4,36 +4,21 @@ class AppTheme {
   const AppTheme._();
 
   static ThemeData light() {
-    const primaryColor = Color(0xFF101321);
-    const surfaceColor = Color(0xFF151A2D);
-
     return ThemeData(
       brightness: Brightness.dark,
-      colorScheme: const ColorScheme.dark(
-        primary: Color(0xFF6C5CE7),
-        secondary: Color(0xFF00B894),
-        surface: surfaceColor,
-        background: primaryColor,
-      ),
-      scaffoldBackgroundColor: primaryColor,
+      primarySwatch: Colors.deepPurple,
+      useMaterial3: false,
+      scaffoldBackgroundColor: Colors.black,
       appBarTheme: const AppBarTheme(
-        backgroundColor: surfaceColor,
+        backgroundColor: Colors.black,
         foregroundColor: Colors.white,
-        elevation: 0,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF6C5CE7),
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
       ),
       inputDecorationTheme: const InputDecorationTheme(
-        filled: true,
-        fillColor: surfaceColor,
         border: OutlineInputBorder(),
       ),
     );
