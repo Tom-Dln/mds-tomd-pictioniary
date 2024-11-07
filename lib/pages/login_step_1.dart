@@ -11,7 +11,7 @@ import '../utils/images.dart';
 import '../utils/sharedpreferences.dart';
 import '../widgets/MyButton.dart';
 import '../widgets/pict_background.dart';
-import 'home_placeholder.dart';
+import 'login_step_2.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -84,8 +84,8 @@ class _LoginScreenState extends State<LoginScreen> {
     await SharedPreferencesHelper.saveString('name', _usernameController.text);
 
     if (!mounted) return;
-    Navigator.of(context).pushReplacement(
-      CupertinoPageRoute(builder: (_) => const HomePlaceholderScreen()),
+    Navigator.of(context).push(
+      CupertinoPageRoute(builder: (_) => const LoginScreen2()),
     );
   }
 

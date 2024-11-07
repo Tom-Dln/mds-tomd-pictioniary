@@ -2,8 +2,9 @@
 
 import 'package:flutter/material.dart';
 
-import 'pages/home_placeholder.dart';
 import 'pages/login_step_1.dart';
+import 'pages/login_step_2.dart';
+import 'pages/team_composition.dart';
 import 'utils/constants.dart';
 import 'utils/images.dart';
 import 'utils/sharedpreferences.dart';
@@ -26,12 +27,19 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _bootstrapSession() async {
     final userId = await SharedPreferencesHelper.getInt('id');
+    final sessionId = await SharedPreferencesHelper.getString('gameSessionId') ?? '';
+
     await Future<void>.delayed(const Duration(seconds: 2));
 
     if (!mounted) return;
 
+    if (userId != null && sessionId.isNotEmpty) {
+      _openScreen(const TeamCompositionScreen());
+      return;
+    }
+
     if (userId != null) {
-      _openScreen(const HomePlaceholderScreen());
+      _openScreen(const LoginScreen2());
       return;
     }
 

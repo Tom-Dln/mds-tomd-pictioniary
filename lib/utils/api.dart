@@ -10,6 +10,7 @@ class PictApi {
   static const String BASE_URL = 'https://pictioniary.wevox.cloud/api';
   static const String LOGIN = '/login';
   static const String REGISTER = '/players';
+  static const String GAME_SESSIONS = '/game_sessions';
   static const String CHALLENGES_TO_GUESS = '/myChallengesToGuess';
   static const String FINISH_SESSION = '/answer';
 
