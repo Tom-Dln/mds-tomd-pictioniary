@@ -8,6 +8,8 @@ import '../models/team_member.dart';
 import '../utils/actions.dart';
 import '../utils/api.dart';
 import '../utils/sharedpreferences.dart';
+import 'challenge_input.dart';
+import 'challenge_show.dart';
 import 'login_step_2.dart';
 
 class TeamCompositionScreen extends StatefulWidget {
@@ -23,30 +25,23 @@ class _TeamCompositionScreenState extends State<TeamCompositionScreen> {
 
   bool _isLoading = true;
   String _gameCode = '';
-  Timer? _pollingTimer;
+  int _gameOwnerId = 0;
+  int _currentUserId = 0;
 
   @override
   void initState() {
     super.initState();
-    _loadTeams(showLoader: true);
-    _pollingTimer =
-        Timer.periodic(const Duration(seconds: 6), (_) => _loadTeams());
+    _loadTeams();
   }
 
-  @override
-  void dispose() {
-    _pollingTimer?.cancel();
-    super.dispose();
-  }
-
-  Future<void> _loadTeams({bool showLoader = false}) async {
-    if (showLoader && mounted) {
-      setState(() => _isLoading = true);
-    }
+  Future<void> _loadTeams() async {
+    setState(() => _isLoading = true);
     _redTeam.clear();
     _blueTeam.clear();
 
     _gameCode = await SharedPreferencesHelper.getString('gameSessionId') ?? '';
+    _currentUserId = await SharedPreferencesHelper.getInt('id') ?? 0;
+
     if (_gameCode.isEmpty) {
       if (!mounted) return;
       showToast(context, 'Code introuvable. Veuillez vous reconnecter.');
@@ -57,6 +52,7 @@ class _TeamCompositionScreenState extends State<TeamCompositionScreen> {
     }
 
     final details = await PictApi.get('${PictApi.GAME_SESSIONS}/$_gameCode');
+    _gameOwnerId = details['player_id'] ?? 0;
     await _persistTeamAssignments(details);
 
     await _populateTeam(details['red_player_1'], 'red', _redTeam);
@@ -66,6 +62,12 @@ class _TeamCompositionScreenState extends State<TeamCompositionScreen> {
 
     if (!mounted) return;
     setState(() => _isLoading = false);
+
+    final teamsComplete =
+        [..._redTeam, ..._blueTeam].every((member) => member.id != 0);
+    if (teamsComplete) {
+      _promptStartGame();
+    }
   }
 
   Future<void> _persistTeamAssignments(Map<String, dynamic> details) async {
@@ -133,22 +135,63 @@ class _TeamCompositionScreenState extends State<TeamCompositionScreen> {
     );
   }
 
-  Future<void> _showNextPhaseInfo() async {
-    await showDialog<void>(
+  Future<void> _promptStartGame() async {
+    final shouldStart = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Phase suivante à venir'),
+        title: const Text('Lancer les challenges'),
         content: const Text(
-          'La phase de challenge sera disponible dans une prochaine version.',
+          'L\'équipe est au complet. Lancer la partie ?',
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Compris'),
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Non'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(
+              _currentUserId == _gameOwnerId ? 'Lancer' : 'Rejoindre',
+            ),
           ),
         ],
       ),
     );
+
+    if (shouldStart == true) {
+      await _startChallenges();
+    }
+  }
+
+  Future<void> _startChallenges() async {
+    final status =
+        await PictApi.get('${PictApi.GAME_SESSIONS}/$_gameCode/status');
+
+    if (_currentUserId == _gameOwnerId && status['status'] == 'waiting') {
+      await PictApi.post(
+        '${PictApi.GAME_SESSIONS}/$_gameCode/start',
+        {'status': 'challenge'},
+      );
+      if (!mounted) return;
+      showToast(context, 'Les challenges sont lancés.');
+      Navigator.of(context).push(
+        CupertinoPageRoute(builder: (_) => const ChallengeInputScreen()),
+      );
+      return;
+    }
+
+    if (!mounted) return;
+    if (status['status'] == 'challenge') {
+      Navigator.of(context).push(
+        CupertinoPageRoute(builder: (_) => const ChallengeInputScreen()),
+      );
+    } else if (status['status'] == 'drawing') {
+      Navigator.of(context).push(
+        CupertinoPageRoute(builder: (_) => const ChallengeDrawScreen()),
+      );
+    } else {
+      showToast(context, 'La partie n\'a pas encore commencé.');
+    }
   }
 
   bool get _isTeamComplete =>
@@ -192,7 +235,7 @@ class _TeamCompositionScreenState extends State<TeamCompositionScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
-              onRefresh: () => _loadTeams(showLoader: true),
+              onRefresh: _loadTeams,
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
@@ -244,7 +287,7 @@ class _TeamCompositionScreenState extends State<TeamCompositionScreen> {
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       onPressed: _isTeamComplete
-                          ? _showNextPhaseInfo
+                          ? _promptStartGame
                           : _showIncompleteWarning,
                       icon: const Icon(Icons.play_arrow),
                       label: Text(
