@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -31,15 +32,21 @@ class _ChallengeInputScreenState extends State<ChallengeInputScreen> {
 
   bool _isLoading = true;
   int _challengeCount = 0;
+  Timer? _refreshTimer;
 
   @override
   void initState() {
     super.initState();
     _loadChallenges();
+    _refreshTimer = Timer.periodic(
+      const Duration(seconds: 5),
+      (_) => _loadChallenges(showLoader: false),
+    );
   }
 
   @override
   void dispose() {
+    _refreshTimer?.cancel();
     super.dispose();
   }
 

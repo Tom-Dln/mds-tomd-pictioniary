@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ class _ChallengeDrawScreenState extends State<ChallengeDrawScreen> {
   int _currentIndex = 0;
   bool _isLoading = true;
   int _remainingRegenerations = 2;
+  Timer? _statusTimer;
   String _sessionId = '';
 
   @override
@@ -35,6 +37,7 @@ class _ChallengeDrawScreenState extends State<ChallengeDrawScreen> {
 
   @override
   void dispose() {
+    _statusTimer?.cancel();
     _promptController.dispose();
     super.dispose();
   }
@@ -50,6 +53,29 @@ class _ChallengeDrawScreenState extends State<ChallengeDrawScreen> {
     }
 
     await _loadChallenges();
+    _startStatusPolling();
+  }
+
+  void _startStatusPolling() {
+    _statusTimer = Timer.periodic(
+      const Duration(seconds: 5),
+      (_) => _checkGameStatus(),
+    );
+  }
+
+  Future<void> _checkGameStatus() async {
+    try {
+      final status =
+          await PictApi.get('${PictApi.GAME_SESSIONS}/$_sessionId/status');
+      if (status['status'] == 'guessing') {
+        if (mounted) {
+          showToast(context, 'Phase de devinette lancée.');
+          Navigator.pop(context);
+        }
+      }
+    } catch (error) {
+      debugPrint('Erreur de vérification du statut: $error');
+    }
   }
 
   Future<void> _loadChallenges() async {
