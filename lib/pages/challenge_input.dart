@@ -92,9 +92,7 @@ class _ChallengeInputScreenState extends State<ChallengeInputScreen> {
         _isLoading = false;
       });
     } catch (error) {
-      if (mounted) {
-        showToast(context, 'Une erreur est survenue.');
-      }
+      showToast("Une erreur s'est produite");
       setState(() => _isLoading = false);
     }
   }
@@ -119,8 +117,7 @@ class _ChallengeInputScreenState extends State<ChallengeInputScreen> {
       await _loadChallenges();
       _showSuccessDialog();
     } catch (error) {
-      if (!mounted) return;
-      showToastError(context, 'Impossible de créer le challenge.');
+      showToastError(error.toString());
       if (error.toString().contains('not in the challenge')) {
         _moveToDrawingPhase();
       }
@@ -128,7 +125,7 @@ class _ChallengeInputScreenState extends State<ChallengeInputScreen> {
   }
 
   void _moveToDrawingPhase() {
-    showToastBlack(context, 'La partie a commencé.');
+    showToastBlack('La partie a commencé.');
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (_) => const ChallengeDrawScreen()),
     );
@@ -160,7 +157,7 @@ class _ChallengeInputScreenState extends State<ChallengeInputScreen> {
     await SharedPreferencesHelper.clearData();
     if (!mounted) return;
 
-    showToast(context, 'Vous êtes déconnecté.');
+    showToast('Vous êtes déconnecté.');
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const LoginScreen()),
       (_) => false,

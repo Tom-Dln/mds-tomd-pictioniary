@@ -20,11 +20,16 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen>
+    with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _passwordFocus = FocusNode();
+  late final AnimationController _animationController = AnimationController(
+    duration: const Duration(milliseconds: 700),
+    vsync: this,
+  )..forward();
 
   bool _isLoginMode = true;
   bool _isSubmitting = false;
@@ -32,6 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
+    _animationController.dispose();
     _usernameController.dispose();
     _passwordController.dispose();
     _passwordFocus.dispose();
@@ -89,11 +95,11 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  bool _shouldExitApp(BuildContext context) {
+  bool _shouldExitApp() {
     final now = DateTime.now();
     if (now.difference(_lastBackPressed) > const Duration(seconds: 2)) {
       _lastBackPressed = now;
-      showToast(context, 'Appuyez de nouveau pour quitter.');
+      showToast('Appuyez de nouveau pour quitter');
       return false;
     }
     return true;
@@ -104,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return PopScope(
       canPop: false,
       onPopInvoked: (didPop) {
-        if (!didPop && _shouldExitApp(context)) {
+        if (!didPop && _shouldExitApp()) {
           exit(0);
         }
       },
@@ -122,7 +128,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      _AuthHero(isLoginMode: _isLoginMode),
+                      ScaleTransition(
+                        scale: CurvedAnimation(
+                          parent: _animationController,
+                          curve: Curves.easeOutBack,
+                        ),
+                        child: _AuthHero(isLoginMode: _isLoginMode),
+                      ),
                       const SizedBox(height: 28),
                       Text(
                         _isLoginMode

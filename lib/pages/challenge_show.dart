@@ -45,9 +45,7 @@ class _ChallengeDrawScreenState extends State<ChallengeDrawScreen> {
   Future<void> _initialize() async {
     _sessionId = await SharedPreferencesHelper.getString('gameSessionId') ?? '';
     if (_sessionId.isEmpty) {
-      if (mounted) {
-        showToastError(context, 'Session introuvable.');
-      }
+      showToastError('Session non trouvée');
       setState(() => _isLoading = false);
       return;
     }
@@ -68,8 +66,8 @@ class _ChallengeDrawScreenState extends State<ChallengeDrawScreen> {
       final status =
           await PictApi.get('${PictApi.GAME_SESSIONS}/$_sessionId/status');
       if (status['status'] == 'guessing') {
+        showToast('Phase de devinette commencée!');
         if (mounted) {
-          showToast(context, 'Phase de devinette lancée.');
           Navigator.pop(context);
         }
       }
@@ -96,16 +94,14 @@ class _ChallengeDrawScreenState extends State<ChallengeDrawScreen> {
         _isLoading = false;
       });
     } catch (error) {
-      if (mounted) {
-        showToastError(context, 'Impossible de récupérer les données.');
-      }
+      showToastError('Impossible de récupérer les challenges');
       setState(() => _isLoading = false);
     }
   }
 
   Future<void> _submitPrompt() async {
     if (_promptController.text.trim().isEmpty) {
-      showToast(context, 'Veuillez entrer un texte.');
+      showToast('Veuillez entrer un prompt');
       return;
     }
 
@@ -121,22 +117,22 @@ class _ChallengeDrawScreenState extends State<ChallengeDrawScreen> {
         _promptController.clear();
         _isLoading = false;
       });
-      showToast(context, 'Image générée.');
+      showToast('Image générée avec succès');
     } catch (error) {
-      showToastError(context, 'Erreur lors de la génération.');
+      showToastError('Erreur de génération: $error');
       setState(() => _isLoading = false);
     }
   }
 
   Future<void> _regenerateImage() async {
     if (_remainingRegenerations <= 0) {
-      showToast(context, 'Aucune régénération restante.');
+      showToast('Plus de régénérations disponibles');
       return;
     }
 
     final challenge = _challenges[_currentIndex];
     if (challenge.prompt.isEmpty) {
-      showToast(context, 'Aucun prompt disponible.');
+      showToast('Aucun prompt pour régénérer');
       return;
     }
 
@@ -151,9 +147,9 @@ class _ChallengeDrawScreenState extends State<ChallengeDrawScreen> {
         _remainingRegenerations--;
         _isLoading = false;
       });
-      showToast(context, 'Image régénérée.');
+      showToast('Image régénérée avec succès (-10 points)');
     } catch (error) {
-      showToastError(context, 'Erreur lors de la régénération.');
+      showToastError('Erreur de régénération: $error');
       setState(() => _isLoading = false);
     }
   }
@@ -162,7 +158,7 @@ class _ChallengeDrawScreenState extends State<ChallengeDrawScreen> {
     if (_currentIndex < _challenges.length - 1) {
       setState(() => _currentIndex++);
     } else {
-      showToast(context, 'Tous les challenges sont terminés.');
+      showToast('Tous les challenges sont complétés!');
     }
   }
 

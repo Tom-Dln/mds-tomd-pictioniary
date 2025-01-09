@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import 'actions.dart';
 import 'sharedpreferences.dart';
 
 class PictApi {
@@ -78,10 +79,18 @@ class PictApi {
 
   static dynamic _handleResponse(http.Response response) {
     if (response.statusCode == 404) {
+      showToastBlack('Ressource non trouvée');
       throw Exception('Not found');
     }
 
     if (response.statusCode != 200 && response.statusCode != 201) {
+      final payload = jsonDecode(response.body);
+      final message = payload['message'];
+      showToastBlack(
+        message is String && message.isNotEmpty
+            ? message
+            : 'Une erreur est survenue. Veuillez réessayer plus tard.',
+      );
       throw Exception('Request failed');
     }
 

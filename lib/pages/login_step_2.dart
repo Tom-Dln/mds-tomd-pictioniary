@@ -80,7 +80,7 @@ class _LoginScreen2State extends State<LoginScreen2> {
       'gameSessionId',
       response['id'].toString(),
     );
-    showToastBlack(context, 'Session créée.');
+    showToastBlack('Session créée avec succès');
     if (!mounted) return;
     Navigator.of(context).push(
       CupertinoPageRoute(builder: (_) => const TeamCompositionScreen()),
@@ -90,9 +90,7 @@ class _LoginScreen2State extends State<LoginScreen2> {
   Future<void> _joinSession(String code) async {
     setState(() => _isProcessing = true);
     try {
-      if (mounted) {
-        showToastBlack(context, 'Recherche de la partie en cours...');
-      }
+      showToastBlack('Recherche de la partie en cours...');
       final details = await PictApi.get('${PictApi.GAME_SESSIONS}/$code');
       await _persistTeamAssignments(details);
 
@@ -105,7 +103,6 @@ class _LoginScreen2State extends State<LoginScreen2> {
         await SharedPreferencesHelper.saveString('gameSessionId', code);
         if (mounted) {
           showToastBlack(
-            context,
             userId == details['player_id']
                 ? 'Vous êtes le maître de cette partie.'
                 : 'Vous avez rejoint la partie.',
@@ -135,7 +132,7 @@ class _LoginScreen2State extends State<LoginScreen2> {
         '${PictApi.GAME_SESSIONS}/$code/join',
         {'color': selectedRed ? 'red' : 'blue'},
       );
-      showToastBlack(context, 'Session rejointe.');
+      showToastBlack('Session rejointe avec succès');
       if (!mounted) return;
       Navigator.of(context).push(
         CupertinoPageRoute(builder: (_) => const TeamCompositionScreen()),
@@ -179,11 +176,11 @@ class _LoginScreen2State extends State<LoginScreen2> {
     final blueTwo = await SharedPreferencesHelper.getInt('blue_player_2') ?? 0;
 
     if (joinAsRed && redOne != 0 && redTwo != 0) {
-      showToast(context, "L'équipe rouge est complète.");
+      showToast("L'équipe rouge est déjà complète");
       return false;
     }
     if (!joinAsRed && blueOne != 0 && blueTwo != 0) {
-      showToast(context, "L'équipe bleue est complète.");
+      showToast("L'équipe bleue est déjà complète");
       return false;
     }
     return true;

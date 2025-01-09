@@ -1,30 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
-void showToast(BuildContext context, String message) {
-  _showSnackBar(context, message, Colors.black87);
-}
+import 'constants.dart';
+import 'dimens.dart';
 
-void showToastBlack(BuildContext context, String message) {
-  _showSnackBar(context, message, Colors.grey.shade800);
-}
+enum ToastKind { normal, accent, error }
 
-void showToastError(BuildContext context, String message) {
-  _showSnackBar(context, message, Colors.red.shade700);
-}
+void showToast(String message) => _showToast(message, ToastKind.normal);
 
-void _showSnackBar(BuildContext context, String message, Color background) {
-  final messenger = ScaffoldMessenger.maybeOf(context);
-  if (messenger == null) {
-    return;
-  }
+void showToastBlack(String message) => _showToast(message, ToastKind.accent);
 
-  messenger
-    ..hideCurrentSnackBar()
-    ..showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: background,
-        duration: const Duration(seconds: 2),
-      ),
-    );
+void showToastError(String message) => _showToast(message, ToastKind.error);
+
+void _showToast(String message, ToastKind kind) {
+  final background = switch (kind) {
+    ToastKind.normal => PictConstants.PictBlack,
+    ToastKind.accent => Colors.black,
+    ToastKind.error => PictConstants.PictRed,
+  };
+
+  Fluttertoast.showToast(
+    msg: message,
+    toastLength: Toast.LENGTH_SHORT,
+    gravity: ToastGravity.BOTTOM,
+    timeInSecForIosWeb: 1,
+    backgroundColor: background,
+    textColor: PictConstants.PictSecondary,
+    fontSize: PictDimens.pictDefaultSize * 0.6,
+  );
 }

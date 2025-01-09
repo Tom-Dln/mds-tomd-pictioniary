@@ -14,11 +14,14 @@ dependencies:
   cupertino_icons: ^1.0.6
   shared_preferences: ^2.2.3
   http: ^1.2.2
+  fluttertoast: ^8.2.8
   progress_dialog_null_safe: ^3.0.0
   timer_count_down: ^2.2.2
   qr_code_scanner: ^1.0.1
   toggle_switch: ^2.3.0
   jwt_decoder: ^2.0.1
+  animated_text_kit: ^4.2.2
+  qr_flutter: ^4.1.0
 
 dev_dependencies:
   flutter_test:
